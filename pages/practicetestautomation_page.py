@@ -1,5 +1,7 @@
 from playwright.sync_api import Page
 
+from helpers.settings import URLs
+
 
 class LoginPage:
     def __init__(self, page):
@@ -12,7 +14,7 @@ class LoginPage:
         self.login_section = page.locator("#login")
 
     def navigate_to_login_page(self):
-        self.page.goto("https://practicetestautomation.com/practice-test-login/")
+        self.page.goto(URLs.PRACTICE_TEST_AUTOMATION_LOGIN.value)
 
     def fill_username(self, username):
         self.username_input.fill(username)
@@ -49,7 +51,7 @@ class LoggedInSuccessfullyPage:
         self.post_content = page.locator(".post-content")
 
     def verify_page_url(self):
-        assert "practicetestautomation.com/logged-in-successfully/" in self.page.url
+        assert URLs.PRACTICE_TEST_AUTOMATION_LOGGED_IN.value in self.page.url
         return self
 
     def get_page_title(self):

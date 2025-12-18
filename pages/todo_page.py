@@ -1,5 +1,7 @@
 from playwright.sync_api import Page, expect, Locator
 
+from helpers.settings import URLs
+
 
 class TodoPage:
 
@@ -12,7 +14,7 @@ class TodoPage:
         self.all_link: Locator = page.get_by_role("link", name="All")
     
     def open(self):
-        self.page.goto("https://demo.playwright.dev/todomvc/#/")
+        self.page.goto(URLs.DEMO_TODOMVC.value)
     
     def add_todo_item(self, text: str):
         self.todo_input.fill(text)

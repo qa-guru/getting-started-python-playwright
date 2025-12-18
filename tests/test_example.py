@@ -4,20 +4,35 @@ import allure
 import pytest
 from playwright.sync_api import Page, expect, Route, BrowserContext
 
+from helpers.settings import URLs
 from pages.community_page import CommunityPage
 from pages.main_page import MainPage
 from pages.python_intro_page import IntroPythonPage
 
-
 @pytest.fixture(scope="function", autouse=True)
 def before_each_after_each(page: Page):
-    page.goto("https://playwright.dev/")
+    page.goto(URLs.PLAYWRIGHT_DEV_HOME.value)
     yield
 
-# python -m pytest -m plw --headed --tracing on --screenshot on --video retain-on-failure
+
+def test_todo_add_item(page: Page):
+    page.goto(URLs.DEMO_TODOMVC.value, timeout=500)
+    expect(page).to_have_url(URLs.DEMO_TODOMVC.value)
+    expect(page).to_have_title("React • TodoMVC")
+
+    new_todo = page.locator(".new-todo1")
+    item = "buy gifts"
+    new_todo.fill(item, timeout=10000)
+    new_todo.press("Enter")
+
+    new_item = page.get_by_test_id("todo-title")
+
+    expect(new_item).to_be_visible()
+    expect(new_item).to_contain_text(item)
+
 @pytest.mark.plw
 def test_todomvc_basic_flow(page: Page) -> None:
-    page.goto("https://demo.playwright.dev/todomvc/#/")
+    page.goto(URLs.DEMO_TODOMVC.value)
 
     # Поле ввода новой задачи
     new_todo = page.get_by_placeholder("What needs to be done?")
@@ -77,13 +92,13 @@ def test_read_from_console(page):
 
 
 def test_main1(page: Page):
-    page.goto('https://playwright.dev/python/docs/intro')
+    page.goto(URLs.PLAYWRIGHT_PYTHON_INTRO.value)
     page.wait_for_timeout(10000)
     expect(page).to_have_title(re.compile("Playwright"))
 
 
 def test_playwright_python(page: Page, context: BrowserContext):
-    page.goto('https://playwright.dev')
+    page.goto(URLs.PLAYWRIGHT_DEV.value)
     page.wait_for_load_state('networkidle')
     # Ждем появления ссылки и кликаем по ней
     playwright_link = page.get_by_role("link", name="Playwright: Fast and reliable")
@@ -105,11 +120,8 @@ def test_playwright_python(page: Page, context: BrowserContext):
     expect(logo_link).to_be_visible()
 
 
-URL = 'https://habr.com/ru/feed/'
-
-
 def test_habr(page: Page):
-    page.goto(URL)
+    page.goto(URLs.HABR_FEED.value)
     page.wait_for_load_state('networkidle')
 
     # Рекламный блок может не загрузиться или быть заблокирован, делаем проверку опциональной
@@ -144,7 +156,7 @@ def test_habr(page: Page):
 @pytest.mark.mock
 @allure.title("Test mock")
 def test_mock_the_fruit_api(page: Page):
-    page.goto("https://demo.playwright.dev/api-mocking")
+    page.goto(URLs.DEMO_API_MOCKING.value)
     page.wait_for_timeout(10000)
 
     def handle(route: Route):
@@ -152,7 +164,7 @@ def test_mock_the_fruit_api(page: Page):
         route.fulfill(json=json)
 
     page.route("*/**/api/v1/fruits", handle)
-    page.goto("https://demo.playwright.dev/api-mocking")
+    page.goto(URLs.DEMO_API_MOCKING.value)
 
     page.wait_for_timeout(10000)
     expect(page.get_by_text("Strawberry")).to_be_visible()

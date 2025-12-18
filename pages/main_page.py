@@ -1,5 +1,7 @@
 from playwright.sync_api import Page, expect, Locator
 
+from helpers.settings import URLs
+
 
 class MainPage:
     def __init__(self, page):
@@ -14,7 +16,7 @@ class MainPage:
         self.python_locator.click()
 
     def open(self):
-        url = "https://playwright.dev/"
+        url = URLs.PLAYWRIGHT_DEV_HOME.value
         self.page.goto(url)
         self.page.wait_for_timeout(10000)
         self.page.wait_for_url(url, wait_until="load", timeout=30000)

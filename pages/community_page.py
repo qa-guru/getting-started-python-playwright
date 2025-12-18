@@ -26,6 +26,3 @@ class CommunityPage:
             name="Screen shot on failure for locator",
             attachment_type=allure.attachment_type.PNG,
         )
-
-
-
